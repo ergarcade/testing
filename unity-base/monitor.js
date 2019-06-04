@@ -1,6 +1,36 @@
 'use strict';
 
 /*
+ * Anticipated _minimal_ usage:
+ *
+ * let m = new Monitor();
+ *
+ * let cbMultiplexed = function(o) {
+ *      /* handle object o */
+ * };
+ *
+ * let cbDisconnected = function() {
+ *      /* handle disconnect */
+ * };
+ *
+ * document.querySelector("#connect").addEventListener('click', function() {
+ *      m.connect()
+ *      .then(() => {
+ *          return m.addEventListener('multiplexed-information', cbMultiplexed)
+ *          .then(() => {
+ *              return m.addEventListener('disconnect', cbDisconnected);
+ *          })
+ *          .catch(error => {
+ *              console.log(error);
+ *          });
+ *      })
+ *      .catch(error => {
+ *          console.log(error);
+ *      });
+ * });
+ */
+
+/*
  * From https://developer.mozilla.org/en-US/docs/Web/API/EventTarget
  */
 var EventTarget = function() {
