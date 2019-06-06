@@ -6,11 +6,11 @@
  * let m = new Monitor();
  *
  * let cbMultiplexed = function(o) {
- *      /* handle object o */
+ *      // handle object o
  * };
  *
  * let cbDisconnected = function() {
- *      /* handle disconnect */
+ *      // handle disconnect
  * };
  *
  * document.querySelector("#connect").addEventListener('click', function() {
