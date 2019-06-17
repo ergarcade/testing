@@ -7,10 +7,22 @@ function main() {
     const fov = 75;
     const aspect = 2;
     const near = 0.1;
-    const far = 5;
+    const far = 1000;
     const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 
-    camera.position.z = 2;
+    const elem_x_rot = document.querySelector('#x');
+    const elem_y_rot = document.querySelector('#y');
+    const elem_z_rot = document.querySelector('#z');
+
+    const elem_cam_x = document.querySelector('#cam_x');
+    const elem_cam_y = document.querySelector('#cam_y');
+    const elem_cam_z = document.querySelector('#cam_z');
+
+    camera.position.set(2, 4, 3);
+
+    const controls = new THREE.OrbitControls(camera, canvas);
+    controls.target.set(0, 0, 0);
+    controls.update();
 
     const scene = new THREE.Scene();
 
@@ -20,6 +32,28 @@ function main() {
         const light = new THREE.DirectionalLight(color, intensity);
         light.position.set(-1, 2, 4);
         scene.add(light);
+    }
+
+    {
+        const planeSize = 20;
+
+        const loader = new THREE.TextureLoader();
+        const texture = loader.load('https://threejsfundamentals.org/threejs/resources/images/checker.png');
+        texture.wrapS = THREE.RepeatWrapping;
+        texture.wrapT = THREE.RepeatWrapping;
+        texture.magFilter = THREE.NearestFilter;
+        const repeats = planeSize / 2;
+        texture.repeat.set(repeats, repeats);
+
+        const planeGeo = new THREE.PlaneBufferGeometry(planeSize, planeSize);
+        const planeMat = new THREE.MeshPhongMaterial({
+          map: texture,
+          side: THREE.DoubleSide,
+        });
+        const mesh = new THREE.Mesh(planeGeo, planeMat);
+        mesh.position.y = -1;
+        mesh.rotation.x = Math.PI * -.5;
+        scene.add(mesh);
     }
 
     const boxWidth = 1;
@@ -39,8 +73,6 @@ function main() {
 
     const cubes = [
         makeInstance(geometry, 0x44aa88, 0),
-        makeInstance(geometry, 0x8844aa, -2),
-        makeInstance(geometry, 0xaa8844, 2)
     ];
 
     function resizeRendererToDisplaySize(renderer) {
@@ -69,8 +101,17 @@ function main() {
 
             cube.rotation.x = rot;
             cube.rotation.y = rot;
+
+            elem_x_rot.textContent = cube.rotation.x.toFixed(3);
+            elem_y_rot.textContent = cube.rotation.y.toFixed(3);
+            elem_z_rot.textContent = cube.rotation.z.toFixed(3);
+
+            elem_cam_x.textContent = camera.position.x.toFixed(3);
+            elem_cam_y.textContent = camera.position.y.toFixed(3);
+            elem_cam_z.textContent = camera.position.z.toFixed(3);
         });
 
+        controls.update();
         renderer.render(scene, camera);
         requestAnimationFrame(render);
     }
