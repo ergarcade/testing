@@ -159,15 +159,12 @@ function doMonitor() {
             .then(() => {
                 cbConnecting();
                 return m.addEventListener('multiplexed-information', cbMultiplexed)
-                .then(() => {
-                    return m.addEventListener('disconnect', cbDisconnected);
-                })
-                .then(() => {
-                    cbConnected();
-                })
-                .catch(error => {
-                    console.log(error);
-                });
+            })
+            .then(() => {
+                return m.addEventListener('disconnect', cbDisconnected);
+            })
+            .then(() => {
+                cbConnected();
             })
             .catch(error => {
                 console.log(error);
