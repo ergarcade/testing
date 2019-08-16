@@ -7,6 +7,7 @@
  *
  * let cbMultiplexed = function(o) {
  *      // handle object o
+ *      // console.log(o);
  * };
  *
  * let cbDisconnected = function() {
@@ -740,7 +741,7 @@ class Monitor {
             this.device.addEventListener('gattserverdisconnected', _gattDisconnect => {
                 console.log('gattserverdisconnected');
                 this.device.removeEventListener('gattserverdisconnected', _gattDisconnect);
-                this.idObjectMap.clear();
+                //this.idObjectMap.clear();
                 this.eventTarget.dispatchEvent({ type: 'disconnect'});
             });
             return device.gatt.connect();
@@ -748,6 +749,10 @@ class Monitor {
         .then(server => {
             this.server = server;
             return Promise.resolve();
+        })
+        .catch(error => {
+            console.log(error);
+            return Promise.reject(error);
         });
     }
 
@@ -758,7 +763,7 @@ class Monitor {
             console.log("disconnect: wasn't connected");
             return;
         }
-        return this.device.gatt.disconnect();
+        this.device.gatt.disconnect();
     }
 
     /*
@@ -1310,6 +1315,7 @@ class Monitor {
 
         return this._getCharacteristic(characteristic)
             .then(c => {
+                console.log('stopping notifications for ' + characteristic.id);
                 return c.stopNotifications();   /* XXX ? not working? */
             })
             .then(c => {
@@ -1544,6 +1550,7 @@ class Monitor {
             })
             .catch(error => {
                 console.log(error);
+                return Promise.reject(error);
             });
     }
 };

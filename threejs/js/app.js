@@ -1,5 +1,7 @@
 'use strict';
 
+let m;
+
 function main() {
     const canvas = document.querySelector('#c');
     const renderer = new THREE.WebGLRenderer({ canvas });
@@ -119,4 +121,48 @@ function main() {
     requestAnimationFrame(render);
 }
 
+function doMonitor() {
+    m = new Monitor();
+
+    let cbMultiplexed = function(o) {
+    };
+
+    let cbConnected = function() {
+        // handle connection
+        document.querySelector('#connect').innerText = 'Disconnect';
+    };
+
+    let cbDisconnected = function() {
+        // handle disconnect
+        document.querySelector('#connect').innerText = 'Connect';
+        m.removeEventListener('disconnect', cbDisconnected);
+    };
+
+    document.querySelector("#connect").addEventListener('click', function() {
+        if (m.connected()) {
+            m.removeEventListener('multiplexed-information', cbMultiplexed);
+            m.disconnect();
+        } else {
+            m.connect()
+            .then(() => {
+                cbConnected();
+                return m.addEventListener('multiplexed-information', cbMultiplexed)
+                .then(() => {
+                    return m.addEventListener('disconnect', cbDisconnected);
+                })
+                .then(() => {
+                    console.log('connected');
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+            })
+            .catch(error => {
+                console.log(error);
+            });
+        }
+    });
+}
+
 main();
+doMonitor();
