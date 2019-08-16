@@ -125,33 +125,45 @@ function doMonitor() {
     m = new Monitor();
 
     let cbMultiplexed = function(o) {
+        console.log(o.data);
     };
 
     let cbConnected = function() {
-        // handle connection
         document.querySelector('#connect').innerText = 'Disconnect';
+        document.querySelector('#connect').disabled = false;
     };
 
     let cbDisconnected = function() {
-        // handle disconnect
         document.querySelector('#connect').innerText = 'Connect';
-        m.removeEventListener('disconnect', cbDisconnected);
+        document.querySelector('#connect').disabled = false;
+
+        return m.removeEventListener('disconnect', cbDisconnected);
     };
+
+    let cbConnecting = function() {
+        document.querySelector('#connect').innerText = 'Connecting';
+        document.querySelector('#connect').disabled = true;
+    }
 
     document.querySelector("#connect").addEventListener('click', function() {
         if (m.connected()) {
-            m.removeEventListener('multiplexed-information', cbMultiplexed);
-            m.disconnect();
+            m.removeEventListener('multiplexed-information', cbMultiplexed)
+            .then(() => {
+                m.disconnect();
+            })
+            .catch(error => {
+                console.log(error);
+            });
         } else {
             m.connect()
             .then(() => {
-                cbConnected();
+                cbConnecting();
                 return m.addEventListener('multiplexed-information', cbMultiplexed)
                 .then(() => {
                     return m.addEventListener('disconnect', cbDisconnected);
                 })
                 .then(() => {
-                    console.log('connected');
+                    cbConnected();
                 })
                 .catch(error => {
                     console.log(error);

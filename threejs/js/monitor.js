@@ -741,7 +741,7 @@ class Monitor {
             this.device.addEventListener('gattserverdisconnected', _gattDisconnect => {
                 console.log('gattserverdisconnected');
                 this.device.removeEventListener('gattserverdisconnected', _gattDisconnect);
-                //this.idObjectMap.clear();
+                this.idObjectMap.clear();
                 this.eventTarget.dispatchEvent({ type: 'disconnect'});
             });
             return device.gatt.connect();
@@ -1241,8 +1241,6 @@ class Monitor {
     _cbMultiplexedInformation(monitor, e) {
         const characteristic = e.target.value.getUint8();
 
-        /* up to here */
-
         /* XXX make this a jump table */
         switch (characteristic) {
             case 0x31: monitor._cbGeneralStatus(monitor, e, true); break;
@@ -1315,8 +1313,7 @@ class Monitor {
 
         return this._getCharacteristic(characteristic)
             .then(c => {
-                console.log('stopping notifications for ' + characteristic.id);
-                return c.stopNotifications();   /* XXX ? not working? */
+                return c.stopNotifications();
             })
             .then(c => {
                 c.removeEventListener('characteristicvaluechanged', e => {
