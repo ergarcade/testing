@@ -121,33 +121,33 @@ function main() {
     requestAnimationFrame(render);
 }
 
-function doMonitor() {
+let cbMultiplexed = function(o) {
+    console.log(o.data);
+};
+
+let cbConnected = function() {
+    document.querySelector('#connect').innerText = 'Disconnect';
+    document.querySelector('#connect').disabled = false;
+};
+
+let cbDisconnected = function() {
+    document.querySelector('#connect').innerText = 'Connect';
+    document.querySelector('#connect').disabled = false;
+
+    return m.removeEventListener('disconnect', cbDisconnected);
+};
+
+let cbConnecting = function() {
+    document.querySelector('#connect').innerText = 'Connecting';
+    document.querySelector('#connect').disabled = true;
+}
+
+function doMonitor(cb_connecting, cb_connected, cb_disconnected, cb_message) {
     m = new Monitor();
-
-    let cbMultiplexed = function(o) {
-        console.log(o.data);
-    };
-
-    let cbConnected = function() {
-        document.querySelector('#connect').innerText = 'Disconnect';
-        document.querySelector('#connect').disabled = false;
-    };
-
-    let cbDisconnected = function() {
-        document.querySelector('#connect').innerText = 'Connect';
-        document.querySelector('#connect').disabled = false;
-
-        return m.removeEventListener('disconnect', cbDisconnected);
-    };
-
-    let cbConnecting = function() {
-        document.querySelector('#connect').innerText = 'Connecting';
-        document.querySelector('#connect').disabled = true;
-    }
 
     document.querySelector("#connect").addEventListener('click', function() {
         if (m.connected()) {
-            m.removeEventListener('multiplexed-information', cbMultiplexed)
+            m.removeEventListener('multiplexed-information', cb_message)
             .then(() => {
                 m.disconnect();
             })
@@ -157,14 +157,14 @@ function doMonitor() {
         } else {
             m.connect()
             .then(() => {
-                cbConnecting();
-                return m.addEventListener('multiplexed-information', cbMultiplexed)
+                cb_connecting();
+                return m.addEventListener('multiplexed-information', cb_message)
             })
             .then(() => {
-                return m.addEventListener('disconnect', cbDisconnected);
+                return m.addEventListener('disconnect', cb_disconnected);
             })
             .then(() => {
-                cbConnected();
+                cb_connected();
             })
             .catch(error => {
                 console.log(error);
@@ -174,4 +174,4 @@ function doMonitor() {
 }
 
 main();
-doMonitor();
+doMonitor(cbConnecting, cbConnected, cbDisconnected, cbMultiplexed);
