@@ -671,6 +671,14 @@ class Monitor {
      */
     removeEventListener(type, callback) {
         this.eventTarget.removeEventListener(type, callback);
+
+        /*
+         * We can only modify characteristics if we are connected.
+         */
+        if (!this.connected()) {
+            return Promise.resolve();
+        }
+
         switch (type) {
             case 'general-status':
                 return this._removeGeneralStatusListener();

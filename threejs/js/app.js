@@ -134,7 +134,10 @@ let cbDisconnected = function() {
     document.querySelector('#connect').innerText = 'Connect';
     document.querySelector('#connect').disabled = false;
 
-    return m.removeEventListener('disconnect', cbDisconnected);
+    m.removeEventListener('multiplexed-information', m.cb_message)
+    .then(() => {
+        return m.removeEventListener('disconnect', m.cb_disconnected);
+    });
 };
 
 let cbConnecting = function() {
@@ -145,9 +148,14 @@ let cbConnecting = function() {
 function doMonitor(cb_connecting, cb_connected, cb_disconnected, cb_message) {
     m = new Monitor();
 
+    m.cb_connecting = cb_connecting;
+    m.cb_connected = cb_connected;
+    m.cb_disconnected = cb_disconnected;
+    m.cb_message = cb_message;
+
     document.querySelector("#connect").addEventListener('click', function() {
         if (m.connected()) {
-            m.removeEventListener('multiplexed-information', cb_message)
+            m.removeEventListener('multiplexed-information', m.cb_message)
             .then(() => {
                 m.disconnect();
             })
@@ -157,14 +165,14 @@ function doMonitor(cb_connecting, cb_connected, cb_disconnected, cb_message) {
         } else {
             m.connect()
             .then(() => {
-                cb_connecting();
-                return m.addEventListener('multiplexed-information', cb_message)
+                m.cb_connecting();
+                return m.addEventListener('multiplexed-information', m.cb_message)
             })
             .then(() => {
-                return m.addEventListener('disconnect', cb_disconnected);
+                return m.addEventListener('disconnect', m.cb_disconnected);
             })
             .then(() => {
-                cb_connected();
+                m.cb_connected();
             })
             .catch(error => {
                 console.log(error);
