@@ -143,34 +143,11 @@ let cbConnecting = function() {
 function doMonitor(cb_connecting, cb_connected, cb_disconnected, cb_message) {
     m = new Monitor(cb_connecting, cb_connected, cb_disconnected, cb_message);
 
-    document.querySelector("#connect").addEventListener('click', function() {
+    document.querySelector('#connect').addEventListener('click', function() {
         if (m.connected()) {
-            m.removeEventListener('multiplexed-information', m.cb_message)
-            .then(() => {
-                m.disconnect();
-                m.removeEventListener('multiplexed-information', m.cb_message)
-            })
-            .then(() => {
-                return m.removeEventListener('disconnect', m.cb_disconnected);
-            })
-            .catch(error => {
-                console.log(error);
-            });
+            m.doDisconnect();
         } else {
-            m.connect()
-            .then(() => {
-                m.cb_connecting();
-                return m.addEventListener('multiplexed-information', m.cb_message)
-            })
-            .then(() => {
-                return m.addEventListener('disconnect', m.cb_disconnected);
-            })
-            .then(() => {
-                m.cb_connected();
-            })
-            .catch(error => {
-                console.log(error);
-            });
+            m.doConnect();
         }
     });
 }

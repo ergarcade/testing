@@ -198,6 +198,41 @@ class Monitor {
 
     /*
      */
+    doConnect() {
+        this.connect()
+        .then(() => {
+            this.cb_connecting();
+            return this.addEventListener('multiplexed-information', this.cb_message)
+        })
+        .then(() => {
+            return this.addEventListener('disconnect', this.cb_disconnected);
+        })
+        .then(() => {
+            this.cb_connected();
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+
+    /*
+     */
+    doDisconnect() {
+        this.removeEventListener('multiplexed-information', this.cb_message)
+        .then(() => {
+            this.disconnect();
+            this.removeEventListener('multiplexed-information', this.cb_message)
+        })
+        .then(() => {
+            return this.removeEventListener('disconnect', this.cb_disconnected);
+        })
+        .catch(error => {
+            console.log(error);
+        });
+    }
+
+    /*
+     */
     addEventListener(type, callback) {
         this.eventTarget.addEventListener(type, callback);
         switch (type) {
