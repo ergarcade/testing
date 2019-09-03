@@ -3,32 +3,15 @@
 /*
  * Anticipated _minimal_ usage:
  *
- * let m = new Monitor();
+ *  m = new Monitor(cb_connecting, cb_connected, cb_disconnected, cb_message);
  *
- * let cbMultiplexed = function(o) {
- *      // handle object o
- *      // console.log(o);
- * };
- *
- * let cbDisconnected = function() {
- *      // handle disconnect
- * };
- *
- * document.querySelector("#connect").addEventListener('click', function() {
- *      m.connect()
- *      .then(() => {
- *          return m.addEventListener('multiplexed-information', cbMultiplexed)
- *          .then(() => {
- *              return m.addEventListener('disconnect', cbDisconnected);
- *          })
- *          .catch(error => {
- *              console.log(error);
- *          });
- *      })
- *      .catch(error => {
- *          console.log(error);
- *      });
- * });
+ *  document.querySelector('#connect').addEventListener('click', function() {
+ *      if (m.connected()) {
+ *          m.doDisconnect();
+ *      } else {
+ *          m.doConnect();
+ *      }
+ *  });
  */
 
 /*
