@@ -1,9 +1,14 @@
 let drake;
 
 document.addEventListener("DOMContentLoaded", function() {
-    drake = dragula([ document.querySelector('#graphs') ]);
+    drake = dragula([
+            document.querySelector('#graphs')
+        ],
+        {
+            removeOnSpill: true
+        });
 
-    document.querySelectorAll('#variables > div').forEach(function(el, i) {
+    document.querySelectorAll('#variables div').forEach(function(el, i) {
         el.draggable = true;
     });
 
@@ -11,7 +16,7 @@ document.addEventListener("DOMContentLoaded", function() {
         e.dataTransfer.setData('variable', e.target.id);
     });
 
-    let newgraph = document.querySelector('#newgraph');
+    let newgraph = document.querySelector('#graphs');
     newgraph.addEventListener('dragover', function(e) {
         e.preventDefault();
     });
@@ -29,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
             let variable = e.dataTransfer.getData('variable');
 
             console.log('adding variable ' + variable + ' to ' + e.srcElement.id);
+            e.stopPropagation();
         });
 
         document.querySelector('#graphs').appendChild(p);
@@ -43,6 +49,7 @@ document.addEventListener("DOMContentLoaded", function() {
             let variable = e.dataTransfer.getData('variable');
 
             console.log('adding variable ' + variable + ' to ' + e.srcElement.id);
+            e.stopPropagation();
         });
     });
 });

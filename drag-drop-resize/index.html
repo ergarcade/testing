@@ -5,6 +5,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+        <script src="js/ymnnjq.js"></script>
         <script src="js/app.js"></script>
         <script src="js/dragula.min.js"></script>
 
@@ -13,63 +14,64 @@
 
         <style>
         body {
-            background-color: #eee;
+            background-color: #003545;
+            font-size: smaller;
         }
         #variables {
             position: absolute;
-            left: 1em;
-            top: 1em;
-        }
-        #newgraph {
-            position: absolute;
-            top: 1em;
-            left: 10em;
-            right: 1em;
-            height: 3em;
-            background-color: #9aa;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 7em;
+            background: #00454a;
+            padding-left: 0.5em;
+            padding-top: 0.5em;
         }
         #graphs {
             position: absolute;
-            top: 5em;
-            left: 10em;
+            top: 0;
+            left: 7.5em;
+            width: 55em;
+            padding-left: 1em;
+            padding-top: 1em;
+            background-color: #115173;
         }
         .graph {
             width: 10em;
             height: 10em;
-            background-color: #966;
+            background-color: #fff;
             float: left;
             margin-right: 1em;
             margin-bottom: 1em;
             resize: both;
-            overflow: auto;
+            overflow: scroll;
         }
         #variables div {
             width: 5em;
             padding: 0.5em;
             margin-bottom: 0.5em;
             border-radius: 5px;
-            background-color: #669;
+            background-color: #3c6562;
             color: #fff;
         }
         </style>
     </head>
 
     <body>
-        <div id="variables">
-            <div id="one">One</div>
-            <div id="two">Two</div>
-            <div id="three">Three</div>
-            <div id="four">Four</div>
-            <div id="five">Five</div>
-            <div id="six">Six</div>
-            <div id="seven">Seven</div>
-            <div id="eight">Eight</div>
-            <div id="nine">Nine</div>
-            <div id="ten">Ten</div>
-        </div>
+        <div id="sidebar">
+            <div id="variables">
+                <div id="one">One</div>
+                <div id="two">Two</div>
+                <div id="three">Three</div>
+                <div id="four">Four</div>
+                <div id="five">Five</div>
+                <div id="six">Six</div>
+                <div id="seven">Seven</div>
+                <div id="eight">Eight</div>
+                <div id="nine">Nine</div>
+                <div id="ten">Ten</div>
 
-        <div id="newgraph">
-            <p>Drop variable here for new graph</p>
+            </div>
         </div>
 
         <div id="graphs">
