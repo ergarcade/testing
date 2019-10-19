@@ -1,4 +1,8 @@
+let drake;
+
 document.addEventListener("DOMContentLoaded", function() {
+    drake = dragula([ document.querySelector('#graphs') ]);
+
     document.querySelectorAll('#variables > div').forEach(function(el, i) {
         el.draggable = true;
     });
@@ -13,7 +17,6 @@ document.addEventListener("DOMContentLoaded", function() {
     });
     newgraph.addEventListener('drop', function(e) {
         let variable = e.dataTransfer.getData('variable');
-
 
         let p = document.createElement('div');
         p.className = "graph";

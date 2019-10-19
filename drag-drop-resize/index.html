@@ -6,8 +6,10 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
         <script src="js/app.js"></script>
+        <script src="js/dragula.min.js"></script>
 
         <link rel="stylesheet" href="css/style.css" type="text/css" />
+        <link rel="stylesheet" href="css/dragula.min.css" type="text/css" />
 
         <style>
         body {
@@ -38,10 +40,12 @@
             float: left;
             margin-right: 1em;
             margin-bottom: 1em;
+            resize: both;
+            overflow: auto;
         }
         #variables div {
             width: 5em;
-            padding: 1em;
+            padding: 0.5em;
             margin-bottom: 0.5em;
             border-radius: 5px;
             background-color: #669;
