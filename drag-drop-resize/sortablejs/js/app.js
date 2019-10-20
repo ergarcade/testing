@@ -9,12 +9,13 @@ document.addEventListener("DOMContentLoaded", function() {
         setData: function(dataTransfer, el) {
             dataTransfer.setData('Text', el.id);
         },
-        onSort: function(e) {
+        onClone: function(e) {
             e.item.id = "graph_" + (Math.floor((Math.random() * 98) + 1));
+        },
+        onSort: function(e) {
             e.item.classList.remove('variable');
             e.item.classList.add('graph');
         }
-
     });
 
     Sortable.create(document.querySelector('#graphs'), {
