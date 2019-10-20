@@ -9,14 +9,10 @@ document.addEventListener("DOMContentLoaded", function() {
         setData: function(dataTransfer, el) {
             dataTransfer.setData('Text', el.id);
         },
-        onEnd: function(e) {
-            console.log(e);
-            /* XXX ugh - onEnd gets triggered on put == false */
-            if (e.to.id !== "variables") {
-                e.item.id = "graph_" + (Math.floor((Math.random() * 98) + 1));
-                e.item.classList.remove('variable');
-                e.item.classList.add('graph');
-            }
+        onSort: function(e) {
+            e.item.id = "graph_" + (Math.floor((Math.random() * 98) + 1));
+            e.item.classList.remove('variable');
+            e.item.classList.add('graph');
         }
 
     });
