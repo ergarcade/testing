@@ -26,7 +26,6 @@ $(function () {
     $.each(widgets, function (i, widget) {
         console.log(widget[0], widget[1], widget[2]);
         grid.add_widget(widget[0], widget[1], widget[2]);
-        //grid.add_widget.apply(grid, widget)
     });
 
     $('#add_widget').on('click', function(e) {
