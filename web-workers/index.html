@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Worker example: One-core computation</title>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                let worker = new Worker('worker.js');
+
+                worker.onmessage = function (event) {
+                    console.log(event.data);
+                };
+
+                document.querySelector('#start').addEventListener('click', function(e) {
+                    worker.postMessage('start');
+                });
+                document.querySelector('#stop').addEventListener('click', function(e) {
+                    worker.postMessage('stop');
+                });
+            });
+        </script>
+    </head>
+
+    <body>
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+    </body>
+</html>
