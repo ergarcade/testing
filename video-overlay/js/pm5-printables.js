@@ -1,6 +1,6 @@
 const pm5printables = {
     empty: function(v) {
-        return v;
+        return v.toString();
     },
     ms2hms: function(msecs) {
         return new Date(msecs).toISOString().substr(11, 8);
@@ -106,7 +106,7 @@ const pm5printables = {
             data.workoutDuration *= 0.01;
         }
         */
-        return wduration;
+        return wduration.toString();
     },
     workoutDurationType: function(wdurationtype) {
         switch (wdurationtype) {
@@ -120,7 +120,7 @@ const pm5printables = {
         return 'unknown';
     },
     as_is: function(n) {
-        return n;
+        return n.toString();
     },
     fixed: function(n) {
         return n.toFixed(2);
@@ -141,7 +141,7 @@ const pm5printables = {
         return n.toFixed(2).toLocaleString() + 'm';
     },
     splitIntervalType: function(n) {
-        return n;
+        return n.toString();
     },
     logDate: function(n) {
         let month = n & 0x0f;                   /* bits 0 to 3 */
@@ -177,7 +177,7 @@ const pm5printables = {
         return r;
     },
     erg_machine_type: function(n) {
-        return n;
+        return n.toString();
     }
 };
 
