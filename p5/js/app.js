@@ -16,44 +16,42 @@ let labelConfig = {
         value: { left: 5, top: 45, textSize: 25 }
     },
     distance: {
-        label: { left: 5, top: 70, textSize: 15 },
-        value: { left: 5, top: 95, textSize: 25 }
+        label: { left: 5, top: 80, textSize: 15 },
+        value: { left: 5, top: 105, textSize: 25 }
     },
     currentPace: {
-        label: { left: 5, top: 120, textSize: 15 },
-        value: { left: 5, top: 145, textSize: 25 }
+        label: { left: 5, top: 140, textSize: 15 },
+        value: { left: 5, top: 165, textSize: 25 }
     },
     strokeRate: {
-        label: { left: 5, top: 170, textSize: 15 },
-        value: { left: 5, top: 195, textSize: 25 }
-    },
-    averagePace: {
-        label: { left: 5, top: 220, textSize: 15 },
-        value: { left: 5, top: 245, textSize: 25 }
-    },
-    averagePower: {
-        label: { left: 5, top: 270, textSize: 15 },
-        value: { left: 5, top: 295, textSize: 25 }
+        label: { left: 5, top: 200, textSize: 15 },
+        value: { left: 5, top: 225, textSize: 25 }
     },
     strokePower: {
+        label: { left: 5, top: 260, textSize: 15 },
+        value: { left: 5, top: 285, textSize: 25 }
+    },
+    averagePace: {
         label: { left: 5, top: 320, textSize: 15 },
         value: { left: 5, top: 345, textSize: 25 }
+    },
+    averagePower: {
+        label: { left: 5, top: 380, textSize: 15 },
+        value: { left: 5, top: 405, textSize: 25 }
     }
 };
 
+let capture;
+
 function setup() {
     createCanvas(width, height);
+    capture = createCapture(VIDEO);
+    capture.size(width, height);
+    capture.hide();
 }
 
 function draw() {
-    background(255);
-
-    /* XXX video image */
-
-    fill(0);
-    //ellipse(random(width), random(height), random(width), random(height));
-    ellipse(mouseX, mouseY, 50, 50);
-
+    image(capture, 0, 0, width, height);
     drawStats();
 }
 
@@ -67,18 +65,10 @@ function drawStats() {
     for (let k in labelConfig) {
         if (shared.hasOwnProperty(k)) {
             textSize(labelConfig[k].label.textSize);
-            text(
-                pm5fields[k].label,
-                statsConfig.left + labelConfig[k].label.left,
-                statsConfig.top + labelConfig[k].label.top
-            );
+            text(pm5fields[k].label, labelConfig[k].label.left, labelConfig[k].label.top);
 
             textSize(labelConfig[k].value.textSize);
-            text(
-                pm5fields[k].printable(shared[k]),
-                statsConfig.left + labelConfig[k].value.left,
-                statsConfig.top + labelConfig[k].value.top
-            );
+            text(pm5fields[k].printable(shared[k]), labelConfig[k].value.left, labelConfig[k].value.top);
         }
     }
 }
