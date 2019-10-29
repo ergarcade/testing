@@ -1,57 +1,75 @@
-let width = 640;
-let height = 480;
+let captureWidth = 1280;
+let captureHeight = 720;
+
+let imageWidth = 640;
+let imageHeight= 360;
 
 let statsConfig = {
     left: 0,
     top: 0,
-    width: 160,
-    height: height,
+    width: 140,
+    height: imageHeight,
     fill: 'rgba(64, 64, 64, 0.5)',
     color: 'rgb(255, 255, 255)'
 };
 
+/*
+ * Works for 640x360. Resize if imageWidth / imageHeight are
+ * not 640x360.
+ *
+ * XXX Gah, don't be lazy, write some code to do this.
+ */
 let labelConfig = {
     elapsedTime: {
-        label: { left: 5, top: 20, textSize: 15 },
-        value: { left: 5, top: 45, textSize: 25 }
+        label: { left: 5, top: 20, textSize: 10 },
+        value: { left: 5, top: 40, textSize: 20 }
     },
     distance: {
-        label: { left: 5, top: 80, textSize: 15 },
-        value: { left: 5, top: 105, textSize: 25 }
+        label: { left: 5, top: 65, textSize: 10 },
+        value: { left: 5, top: 85, textSize: 20 }
     },
     currentPace: {
-        label: { left: 5, top: 140, textSize: 15 },
-        value: { left: 5, top: 165, textSize: 25 }
+        label: { left: 5, top: 110, textSize: 10 },
+        value: { left: 5, top: 130, textSize: 20 }
     },
     strokeRate: {
-        label: { left: 5, top: 200, textSize: 15 },
-        value: { left: 5, top: 225, textSize: 25 }
+        label: { left: 5, top: 155, textSize: 10 },
+        value: { left: 5, top: 175, textSize: 20 }
     },
     strokePower: {
-        label: { left: 5, top: 260, textSize: 15 },
-        value: { left: 5, top: 285, textSize: 25 }
+        label: { left: 5, top: 200, textSize: 10 },
+        value: { left: 5, top: 220, textSize: 20 }
     },
     averagePace: {
-        label: { left: 5, top: 320, textSize: 15 },
-        value: { left: 5, top: 345, textSize: 25 }
+        label: { left: 5, top: 245, textSize: 10 },
+        value: { left: 5, top: 265, textSize: 20 }
     },
     averagePower: {
-        label: { left: 5, top: 380, textSize: 15 },
-        value: { left: 5, top: 405, textSize: 25 }
+        label: { left: 5, top: 290, textSize: 10 },
+        value: { left: 5, top: 310, textSize: 20 }
     }
 };
 
 let capture;
 
 function setup() {
-    createCanvas(width, height);
-    capture = createCapture(VIDEO);
-    capture.size(width, height);
+    let canvas = createCanvas(imageWidth, imageHeight);
+    canvas.parent('sketch-holder');
+
+    capture = createCapture({
+        audio: true,
+        video: {
+            width: { min: 640, ideal: captureWidth, max: 1920 },
+            height: { min: 480, ideal: captureHeight, max: 1080 }
+        }
+    }, function(stream) {
+        console.log(capture.width, capture.height);
+    });
     capture.hide();
 }
 
 function draw() {
-    image(capture, 0, 0, width, height);
+    image(capture, 0, 0, imageWidth, imageHeight);
     drawStats();
 }
 
@@ -79,9 +97,24 @@ let toShared = function(k, v) {
     shared[k] = v;
 }
 
+let cbConnecting = function() {
+    document.querySelector('#connect').innerText = 'Connecting';
+    document.querySelector('#connect').disabled = true;
+};
+
+let cbConnected = function() {
+    document.querySelector('#connect').innerText = 'Disconnect';
+    document.querySelector('#connect').disabled = false;
+};
+
+let cbDisconnected = function() {
+    document.querySelector('#connect').innerText = 'Connect';
+    document.querySelector('#connect').disabled = false;
+};
+
 let cbMessage = function(m) {
     for (let k in m.data) {
-        if (m.data.hasOwnProperty(k) && values.hasOwnProperty(k)) {
+        if (m.data.hasOwnProperty(k)) {
             toShared(k, m.data[k]);
         }
     }
@@ -89,25 +122,30 @@ let cbMessage = function(m) {
 
 let chunks = [];
 let recorder;
+let m;
 
 document.addEventListener('DOMContentLoaded', function() {
-    /*
-     * Debug, remove me.
-     */
-    setInterval(function() { toShared('elapsedTime', 100+(Math.random() * 10)); }, 1000);
-    setInterval(function() { toShared('distance', Math.random() * 500) }, 1000);
-    setInterval(function() { toShared('currentPace', 120+(Math.random() * 2)) }, 1000);
-    setInterval(function() { toShared('strokeRate', 20 + Math.trunc(Math.random() * 5)) }, 1000);
-    setInterval(function() { toShared('averagePace', 120+(Math.random() * 2)) }, 1000);
-    setInterval(function() { toShared('averagePower', 200 + Math.trunc(Math.random() * 20)) }, 1000);
-    setInterval(function() { toShared('strokePower', 200 + Math.trunc(Math.random() * 20)) }, 1000);
+    if (navigator.bluetooth) {
+        m = new PM5(cbConnecting, cbConnected, cbDisconnected, cbMessage);
+
+        document.querySelector('#connect').addEventListener('click', function() {
+            if (m.connected()) {
+                m.doDisconnect();
+            } else {
+                m.doConnect();
+            }
+        });
+    } else {
+        alert('Web Bluetooth is not supported! You need a browser and ' +
+                'platform that supports Web Bluetooth to use this application.');
+        document.querySelector('#connect').disabled = true;
+    }
 
     /*
-     *
      */
     document.querySelector('#startRecord').addEventListener('click', function(e) {
         document.querySelector('#startRecord').style.display = 'none';
-        document.querySelector('#stopRecord').style.display = 'block';
+        document.querySelector('#stopRecord').style.display = 'inline-block';
         document.querySelector('#downloadLink').style.display = 'none';
 
         chunks.length = 0;
@@ -121,16 +159,16 @@ document.addEventListener('DOMContentLoaded', function() {
         recorder.start();
     });
     document.querySelector('#stopRecord').addEventListener('click', function(e) {
-        document.querySelector('#startRecord').style.display = 'block';
+        document.querySelector('#startRecord').style.display = 'inline-block';
         document.querySelector('#stopRecord').style.display = 'none';
 
         recorder.stop();
         recorder.addEventListener('stop', function(e) {
             let downloadLink = document.querySelector('#downloadLink');
             downloadLink.href = URL.createObjectURL(new Blob(chunks));
-            downloadLink.download = 'acetest.webm';
+            downloadLink.download = 'video.webm';
 
-            downloadLink.style.display = 'block';
+            downloadLink.style.display = 'inline-block';
             chunks = [];
         });
     });
