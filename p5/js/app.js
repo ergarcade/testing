@@ -87,7 +87,13 @@ let cbMessage = function(m) {
     }
 };
 
+let chunks = [];
+let recorder;
+
 document.addEventListener('DOMContentLoaded', function() {
+    /*
+     * Debug, remove me.
+     */
     setInterval(function() { toShared('elapsedTime', 100+(Math.random() * 10)); }, 1000);
     setInterval(function() { toShared('distance', Math.random() * 500) }, 1000);
     setInterval(function() { toShared('currentPace', 120+(Math.random() * 2)) }, 1000);
@@ -95,4 +101,37 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(function() { toShared('averagePace', 120+(Math.random() * 2)) }, 1000);
     setInterval(function() { toShared('averagePower', 200 + Math.trunc(Math.random() * 20)) }, 1000);
     setInterval(function() { toShared('strokePower', 200 + Math.trunc(Math.random() * 20)) }, 1000);
+
+    /*
+     *
+     */
+    document.querySelector('#startRecord').addEventListener('click', function(e) {
+        document.querySelector('#startRecord').style.display = 'none';
+        document.querySelector('#stopRecord').style.display = 'block';
+        document.querySelector('#downloadLink').style.display = 'none';
+
+        chunks.length = 0;
+        let stream = document.querySelector('#defaultCanvas0').captureStream();
+        recorder = new MediaRecorder(stream);
+        recorder.addEventListener('dataavailable', function(e) {
+            if (e.data.size > 0) {
+                chunks.push(e.data);
+            }
+        });
+        recorder.start();
+    });
+    document.querySelector('#stopRecord').addEventListener('click', function(e) {
+        document.querySelector('#startRecord').style.display = 'block';
+        document.querySelector('#stopRecord').style.display = 'none';
+
+        recorder.stop();
+        recorder.addEventListener('stop', function(e) {
+            let downloadLink = document.querySelector('#downloadLink');
+            downloadLink.href = URL.createObjectURL(new Blob(chunks));
+            downloadLink.download = 'acetest.webm';
+
+            downloadLink.style.display = 'block';
+            chunks = [];
+        });
+    });
 });
